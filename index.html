@@ -21,6 +21,15 @@
 
     <title>Ottawa Blockchain</title>
     <link href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&display=swap" rel="stylesheet">
+    <script>
+      (function () {
+        var params = new URLSearchParams(window.location.search);
+        var redirectPath = params.get('p');
+        if (!redirectPath) return;
+
+        window.history.replaceState(null, '', redirectPath);
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
