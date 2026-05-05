@@ -1,0 +1,94 @@
+{
+  "upcomingEvents": [
+    {
+      "title": "Global Pizza Party Ottawa",
+      "date": "Friday, May 22, 2026",
+      "image": "event8.png",
+      "blurb": "Join us for the Global Pizza Party, a worldwide celebration of pizza and bitcoin, where communities around the world come together to share pizza and good vibes.",
+      "rsvpLink": "https://www.rsv.pizza/ottawa",
+      "partnerEvent": false
+    },
+    {
+      "title": "2026 Futurist Toronto Show",
+      "date": "July 21-22, 2026",
+      "image": "partner3.png",
+      "blurb": "Futurist brings together top and speakers like Vitalik Buterin, Charles Hoskinson, and Eric Trump to explore Web3, crypto, AI, and emerging technologies through real networking and unforgettable experiences.",
+      "rsvpLink": "https://futuristconference.com/toronto",
+      "partnerEvent": true
+    }
+  ],
+  "pastEvents": [
+    {
+      "title": "Advancing Blockchain Technology in Manitoba",
+      "date": "February 28, 2026",
+      "image": "partner1.png",
+      "blurb": "Introduction to blockchain technology, with a focus on how Decentralized Finance (DeFi) and Non-Fungible Tokens (NFTs) can help businesses or creators.",
+      "rsvpLink": "https://luma.com/70b96gfc",
+      "partnerEvent": true
+    },
+    {
+      "title": "DIGITAL ASSET SUMMIT | ONTARIO",
+      "date": "March 3, 2026",
+      "image": "partner2.png",
+      "blurb": "Dive into Real World Assets (RWA) and blockchain, cryptocurrency mining, tokenization, stablecoins, policy, prediction markets, state of the market and more!",
+      "rsvpLink": "https://luma.com/DASONTARIO",
+      "partnerEvent": true
+    },
+    {
+      "title": "2026 and Beyond",
+      "date": "Jan 17, 2026",
+      "image": "event7.png",
+      "blurb": "Take the opportunity to connect with others shaping the next phase of digital innovation in Canada's Capital Region.",
+      "link": "https://luma.com/yfi02fig",
+      "partnerEvent": false
+    },
+    {
+      "title": "AI Agents Workshop on Near",
+      "date": "Apr 8, 2025",
+      "image": "event6.png",
+      "blurb": "Join us for an exciting AI Agent Workshop hosted by the Carleton Blockchain in collaboration with NEAR Protocol and the Blockchain Acceleration Foundation (BAF).",
+      "link": "https://luma.com/x4ahchkd",
+      "partnerEvent": false
+    },
+    {
+      "title": "Snacks and Smart Contracts",
+      "date": "Mar 11, 2025",
+      "image": "event5.png",
+      "blurb": "Smart contracts are at the core of WEB3; they enable decentralized exchanges, decentralized applications and so much more.",
+      "link": "https://luma.com/f6a0so4m",
+      "partnerEvent": false
+    },
+    {
+      "title": "The Future of Coinbase in Canada",
+      "date": "Feb 11, 2025",
+      "image": "event4.png",
+      "blurb": "Join us as Lucas of Coinbase Canada will discuss Coinbase's efforts to bring crypto to the masses in Canada.",
+      "link": "https://luma.com/96meh6k8",
+      "partnerEvent": false
+    },
+    {
+      "title": "Boba and Blockchain",
+      "date": "Jan 31, 2025",
+      "image": "event3.png",
+      "blurb": "Complete a deep dive in the fundamentals in a what a blockchain is, why they work and everything surrounding that.",
+      "link": "https://luma.com/0t7ru5hb",
+      "partnerEvent": false
+    },
+    {
+      "title": "Exploring Onchain Usecases with Patrick",
+      "date": "Jan 9, 2025",
+      "image": "event2.png",
+      "blurb": "Join us for an exciting session with Patrick Dunlop, co-founder of Jackal Labs, as he dives into the vast potential of blockchain technology.",
+      "link": "https://luma.com/pa492agh",
+      "partnerEvent": false
+    },
+    {
+      "title": "Blockchain 101 with Karim Saadeh",
+      "date": "Nov 28, 2024",
+      "image": "event1.png",
+      "blurb": "An introductory info session diving in what a blockchain is, how it works and how its going to revolutionize the world!",
+      "link": "https://luma.com/l94aro7a",
+      "partnerEvent": false
+    }
+  ]
+}

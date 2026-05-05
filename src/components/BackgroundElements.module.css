@@ -1,0 +1,44 @@
+.pattern {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.08;
+  background-image: 
+    linear-gradient(rgba(206, 57, 55, 0.15) 2px, transparent 2px),
+    linear-gradient(90deg, rgba(206, 57, 55, 0.15) 2px, transparent 2px);
+  background-size: 60px 60px;
+}
+
+.floatingShape {
+  position: absolute;
+  border: 3px solid var(--ocb-primary);
+  opacity: 0.2;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.cryptoSymbol {
+  position: absolute;
+  font-family: monospace;
+  font-weight: bold;
+  color: var(--ocb-primary);
+  opacity: 0.15;
+  z-index: 0;
+  pointer-events: none;
+  user-select: none;
+}
+
+.techLine {
+  position: absolute;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--ocb-secondary), transparent);
+  opacity: 0.6;
+  width: 300px;
+  z-index: 0;
+  pointer-events: none;
+  box-shadow: 0 0 15px var(--ocb-secondary);
+}

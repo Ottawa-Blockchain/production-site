@@ -1,0 +1,152 @@
+.scene {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px; 
+}
+
+.canvasContainer {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/* Legacy styles below this line are unused */
+.cubeContainer_unused {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+}
+
+.cube {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  background: var(--ocb-primary);
+  opacity: 0.9;
+  box-shadow: 0 0 10px rgba(206, 57, 55, 0.5);
+  transform-style: preserve-3d;
+}
+
+/* Make the small cubes look 3D themselves (simplified as flat squares facing camera or just boxes) 
+   Actually, making 7 true 3D cubes is expensive in DOM. 
+   Let's make them look like 3D cubes by adding faces or just keep them as flat squares that rotate with the parent?
+   No, the user said "cubes". I'll make them simple 6-sided cubes.
+*/
+
+.cubeFace {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgba(255,255,255,0.2);
+  background: rgba(206, 57, 55, 0.8);
+}
+
+.line {
+  position: absolute;
+  height: 4px; /* Thinner */
+  background: transparent;
+  /* Rounded dots using radial gradient for a bead-like 3D effect */
+  background-image: radial-gradient(circle closest-side, var(--ocb-dark) 85%, transparent 100%);
+  background-size: 10px 100%; /* Spacing of dots */
+  background-repeat: repeat-x;
+  transform-origin: 0 50%;
+  transform-style: preserve-3d;
+  opacity: 0.6;
+}
+
+/* Cross plane to make line visible from all angles and look rounded */
+.lineCross {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: radial-gradient(circle closest-side, var(--ocb-dark) 85%, transparent 100%);
+  background-size: 10px 100%;
+  background-repeat: repeat-x;
+  transform: rotateX(90deg);
+}
+
+.cube {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  background: var(--ocb-primary);
+  opacity: 0.9;
+  box-shadow: 0 0 10px rgba(206, 57, 55, 0.5);
+  transform-style: preserve-3d;
+  transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.cube.lit {
+  background: var(--ocb-secondary);
+  box-shadow: 0 0 25px var(--ocb-secondary), 0 0 10px #fff;
+  z-index: 10;
+}
+
+.cubeFace {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgba(255,255,255,0.2);
+  background: inherit; /* Inherit from .cube to change color easily */
+  opacity: 0.8;
+}
+
+.dataPacket {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 16px; /* Larger to wrap around the line */
+  height: 16px;
+  transform: translate(-50%, -50%);
+  transform-style: preserve-3d;
+  opacity: 0; /* Hidden until animation starts */
+}
+
+/* Create a 3D glowing bead using two intersecting planes */
+.dataPacket::before,
+.dataPacket::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #fff, var(--ocb-secondary));
+  box-shadow: 0 0 10px var(--ocb-secondary), 0 0 20px var(--ocb-secondary);
+}
+
+.dataPacket::after {
+  transform: rotateX(90deg);
+}
+
+.line.active .dataPacket {
+  animation: travel 1.0s linear forwards;
+}
+
+@keyframes travel {
+  0% { left: 0%; opacity: 1; }
+  100% { left: 100%; opacity: 1; }
+}
+
+@media (max-width: 768px) {
+  .scene {
+    position: relative;
+    right: auto;
+    top: auto;
+    transform: none;
+    margin: 0 auto;
+    width: 100%;
+    height: 100%;
+    min-height: 300px;
+  }
+}

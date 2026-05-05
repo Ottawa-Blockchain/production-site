@@ -1,0 +1,121 @@
+.section {
+  padding: 6rem 2rem;
+  background: var(--ocb-bg);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.heading {
+  text-align: center;
+  font-size: 2.5rem;
+  margin-bottom: 3rem;
+  color: var(--ocb-dark);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 2rem;
+}
+
+.card {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s ease;
+  height: 100%;
+}
+
+.card:hover {
+  box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+}
+
+.topAccent {
+  height: 4px;
+  width: 100%;
+  background: var(--ocb-primary);
+}
+
+.cardHeader {
+  padding: 1.5rem 1.5rem 0.5rem;
+}
+
+.name {
+  font-size: 1.5rem;
+  margin-bottom: 0.2rem;
+  color: var(--ocb-dark);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.role {
+  font-size: 0.85rem;
+  color: #777;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 1rem;
+}
+
+.cardBody {
+  padding: 0 1.5rem 1.5rem;
+  flex-grow: 1;
+}
+
+.bio {
+  font-size: 0.95rem;
+  color: #555;
+  line-height: 1.6;
+}
+
+.cardFooter {
+  padding: 1rem 1.5rem;
+  background: #f9f9f9;
+  border-top: 1px solid rgba(0,0,0,0.05);
+  display: flex;
+  justify-content: flex-end;
+}
+
+.linkedinButton {
+  display: flex;
+  align-items: center;
+  padding: 0.6rem;
+  border-radius: 50px;
+  background: transparent;
+  color: #999;
+  text-decoration: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(0,0,0,0.05);
+}
+
+.label {
+  max-width: 0;
+  opacity: 0;
+  white-space: nowrap;
+  font-size: 0.9rem;
+  font-weight: 600;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.linkedinButton:hover {
+  background: #0077b5;
+  color: white;
+  border-color: #0077b5;
+  box-shadow: 0 4px 10px rgba(0, 119, 181, 0.2);
+}
+
+.linkedinButton:hover .label {
+  max-width: 80px;
+  opacity: 1;
+  margin-left: 0.5rem;
+  padding-right: 0.2rem;
+}
+

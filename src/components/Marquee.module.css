@@ -1,0 +1,31 @@
+.marqueeContainer {
+  width: 100%;
+  overflow: hidden;
+  background: var(--ocb-primary);
+  padding: 1rem 0;
+  white-space: nowrap;
+  position: relative;
+  z-index: 10;
+  transform: rotate(-1deg);
+  margin: -2rem 0 2rem 0;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.track {
+  display: inline-block;
+}
+
+.item {
+  font-family: var(--font-primary);
+  font-weight: 900;
+  font-size: 1.5rem;
+  color: white;
+  margin-right: 2rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.separator {
+  color: var(--ocb-secondary);
+  margin-left: 2rem;
+}
