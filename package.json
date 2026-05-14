@@ -13,6 +13,7 @@
     "@react-three/drei": "^9.108.0",
     "@react-three/fiber": "^8.16.8",
     "framer-motion": "^10.16.4",
+    "pdf-lib": "^1.17.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^5.5.0",

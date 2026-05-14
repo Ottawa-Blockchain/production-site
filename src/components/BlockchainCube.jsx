@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { Box, Sphere, Cylinder, PerspectiveCamera } from '@react-three/drei';
+import { Box, Sphere, PerspectiveCamera } from '@react-three/drei';
 import * as THREE from 'three';
 import styles from './BlockchainCube.module.css';
 
