@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState } from 'react';
-import { motion, useMotionValue, animate } from 'framer-motion';
+import { motion, useMotionValue } from 'framer-motion';
 import styles from './Media.module.css';
 
 import img1 from '../assets/gallery/1.png';
