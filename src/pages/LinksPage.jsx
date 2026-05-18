@@ -13,10 +13,6 @@ const LinksPage = () => {
     navigate('/application');
   };
 
-  const handleGiveawayClick = (e) => {
-    e.preventDefault();
-    navigate('/giveaway');
-  };
 
   const links = [
     {
@@ -67,14 +63,15 @@ const LinksPage = () => {
       </div>
 
       <div className={styles.linksContainer}>
-        <Link 
-          to="/giveaway" 
-          onClick={handleGiveawayClick}
+        <a
+          href="https://forms.gle/xH2RANmKvQRFkDfKA"
+          target="_blank"
+          rel="noopener noreferrer"
           className={`${styles.linkItem} ${styles.featuredLink}`}
         >
           <span className={styles.linkIcon}><HiLightningBolt /></span>
-          Futurist Conference Giveaway
-        </Link>
+          Complimentary Toronto Futurist Ticket
+        </a>
 
         {/* Featured Application Link */}
         <Link 
