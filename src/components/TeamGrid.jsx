@@ -29,8 +29,8 @@ const TeamGrid = () => {
     },
     {
       id: 4, 
-      name: 'Karim Saadeh', 
-      role: 'Event Planning Advisor', 
+      name: 'Karim Saadeh',
+      role: 'Advisor',
       bio: '',
       linkedin: 'https://www.linkedin.com/in/karimsaadeh/'
     },
