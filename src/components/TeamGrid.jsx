@@ -20,13 +20,6 @@ const TeamGrid = () => {
       bio: '',
       linkedin: 'https://www.linkedin.com/in/ambassadoraivan/'
     },
-    { 
-      id: 3, 
-      name: 'Michael Weatherhead', 
-      role: 'Strategic Advisor', 
-      bio: '',
-      linkedin: 'https://www.linkedin.com/in/managementconsultant/'
-    },
     {
       id: 4, 
       name: 'Karim Saadeh',
