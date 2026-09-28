@@ -11,11 +11,10 @@ const teamsByYear = {
   '2026-2027': [
     {
       id: 1,
-      name: 'Michael Barbeau',
+      name: 'Michel Barbeau',
       role: 'Advisor',
       bio: '',
-      // TODO: confirm LinkedIn URL
-      linkedin: '',
+      linkedin: 'https://www.linkedin.com/in/michel-barbeau-464906291/',
     },
     {
       id: 2,
@@ -36,8 +35,7 @@ const teamsByYear = {
       name: 'Brad Stewart',
       role: 'Branding & Promotions',
       bio: '',
-      // TODO: confirm LinkedIn URL
-      linkedin: '',
+      linkedin: 'https://www.linkedin.com/in/bradjoy/',
     },
   ],
   '2025-2026': [
