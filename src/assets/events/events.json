@@ -1,13 +1,15 @@
 {
   "upcomingEvents": [
     {
-      "title": "Global Pizza Party Ottawa",
-      "date": "Friday, May 22, 2026",
-      "image": "event8.png",
-      "blurb": "Join us for the Global Pizza Party, a worldwide celebration of pizza and bitcoin, where communities around the world come together to share pizza and good vibes.",
-      "rsvpLink": "https://www.rsv.pizza/ottawa",
+      "title": "Ottawa Web3 x Blockchain Summit",
+      "date": "Thursday, October 1, 2026, 5:00-7:00 PM",
+      "image": "event9.png",
+      "blurb": "A one-evening summit at Hub350 (Kanata) with founders, builders, policy makers and researchers exploring the future of Web3 and blockchain in Canada. Panel moderated by Prof. Michel Barbeau (Carleton University).",
+      "rsvpLink": "https://luma.com/jgg8intk",
       "partnerEvent": false
-    },
+    }
+  ],
+  "pastEvents": [
     {
       "title": "2026 Futurist Toronto Show",
       "date": "July 21-22, 2026",
@@ -15,9 +17,15 @@
       "blurb": "Futurist brings together top and speakers like Vitalik Buterin, Charles Hoskinson, and Eric Trump to explore Web3, crypto, AI, and emerging technologies through real networking and unforgettable experiences.",
       "rsvpLink": "https://futuristconference.com/toronto",
       "partnerEvent": true
-    }
-  ],
-  "pastEvents": [
+    },
+    {
+      "title": "Global Pizza Party Ottawa",
+      "date": "Friday, May 22, 2026",
+      "image": "event8.png",
+      "blurb": "Join us for the Global Pizza Party, a worldwide celebration of pizza and bitcoin, where communities around the world come together to share pizza and good vibes.",
+      "rsvpLink": "https://www.rsv.pizza/ottawa",
+      "partnerEvent": false
+    },
     {
       "title": "Advancing Blockchain Technology in Manitoba",
       "date": "February 28, 2026",
