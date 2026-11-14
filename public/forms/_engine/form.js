@@ -1,0 +1,343 @@
+/* Ottawa Blockchain form engine: design, story cards, dark mode, saving to a Google Sheet.
+   A form page loads form.css and this file, then calls OBC.start({ endpoint, steps, text }).
+   See .claude/skills/obc-form/SKILL.md for how to make a new form. */
+(() => { // keep the engine's names private; only window.OBC is shared
+
+// Brand icons (Simple Icons, simpleicons.org)
+const ICONS = {"substack": {"c": "#FF6719", "d": "M22.539 8.242H1.46V5.406h21.08v2.836zM1.46 10.812V24L12 18.11 22.54 24V10.812H1.46zM22.54 0H1.46v2.836h21.08V0z"}, "discord": {"c": "#5865F2", "d": "M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"}, "instagram": {"c": "#E4405F", "d": "M7.0301.084c-1.2768.0602-2.1487.264-2.911.5634-.7888.3075-1.4575.72-2.1228 1.3877-.6652.6677-1.075 1.3368-1.3802 2.127-.2954.7638-.4956 1.6365-.552 2.914-.0564 1.2775-.0689 1.6882-.0626 4.947.0062 3.2586.0206 3.6671.0825 4.9473.061 1.2765.264 2.1482.5635 2.9107.308.7889.72 1.4573 1.388 2.1228.6679.6655 1.3365 1.0743 2.1285 1.38.7632.295 1.6361.4961 2.9134.552 1.2773.056 1.6884.069 4.9462.0627 3.2578-.0062 3.668-.0207 4.9478-.0814 1.28-.0607 2.147-.2652 2.9098-.5633.7889-.3086 1.4578-.72 2.1228-1.3881.665-.6682 1.0745-1.3378 1.3795-2.1284.2957-.7632.4966-1.636.552-2.9124.056-1.2809.0692-1.6898.063-4.948-.0063-3.2583-.021-3.6668-.0817-4.9465-.0607-1.2797-.264-2.1487-.5633-2.9117-.3084-.7889-.72-1.4568-1.3876-2.1228C21.2982 1.33 20.628.9208 19.8378.6165 19.074.321 18.2017.1197 16.9244.0645 15.6471.0093 15.236-.005 11.977.0014 8.718.0076 8.31.0215 7.0301.0839m.1402 21.6932c-1.17-.0509-1.8053-.2453-2.2287-.408-.5606-.216-.96-.4771-1.3819-.895-.422-.4178-.6811-.8186-.9-1.378-.1644-.4234-.3624-1.058-.4171-2.228-.0595-1.2645-.072-1.6442-.079-4.848-.007-3.2037.0053-3.583.0607-4.848.05-1.169.2456-1.805.408-2.2282.216-.5613.4762-.96.895-1.3816.4188-.4217.8184-.6814 1.3783-.9003.423-.1651 1.0575-.3614 2.227-.4171 1.2655-.06 1.6447-.072 4.848-.079 3.2033-.007 3.5835.005 4.8495.0608 1.169.0508 1.8053.2445 2.228.408.5608.216.96.4754 1.3816.895.4217.4194.6816.8176.9005 1.3787.1653.4217.3617 1.056.4169 2.2263.0602 1.2655.0739 1.645.0796 4.848.0058 3.203-.0055 3.5834-.061 4.848-.051 1.17-.245 1.8055-.408 2.2294-.216.5604-.4763.96-.8954 1.3814-.419.4215-.8181.6811-1.3783.9-.4224.1649-1.0577.3617-2.2262.4174-1.2656.0595-1.6448.072-4.8493.079-3.2045.007-3.5825-.006-4.848-.0608M16.953 5.5864A1.44 1.44 0 1 0 18.39 4.144a1.44 1.44 0 0 0-1.437 1.4424M5.8385 12.012c.0067 3.4032 2.7706 6.1557 6.173 6.1493 3.4026-.0065 6.157-2.7701 6.1506-6.1733-.0065-3.4032-2.771-6.1565-6.174-6.1498-3.403.0067-6.156 2.771-6.1496 6.1738M8 12.0077a4 4 0 1 1 4.008 3.9921A3.9996 3.9996 0 0 1 8 12.0077"}, "linkedin": {"c": "#0A66C2", "d": "M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"}, "x": {"c": "#000000", "d": "M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"}, "telegram": {"c": "#26A5E4", "d": "M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"}, "whatsapp": {"c": "#25D366", "d": "M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"}, "email": {"c": "#5c6168", "d": "M2 5.5A1.5 1.5 0 0 1 3.5 4h17A1.5 1.5 0 0 1 22 5.5v13a1.5 1.5 0 0 1-1.5 1.5h-17A1.5 1.5 0 0 1 2 18.5zm2.2.5L12 11.6 19.8 6zM4 7.9V18h16V7.9l-8 5.7z"}};
+
+// Line icons: Lucide (lucide.dev, ISC licence)
+const LU = {"arrow-left-right": "<path d=\"M8 3 4 7l4 4\" /><path d=\"M4 7h16\" /><path d=\"m16 21 4-4-4-4\" /><path d=\"M20 17H4\" />", "bitcoin": "<path d=\"M11.767 19.089c4.924.868 6.14-6.025 1.216-6.894m-1.216 6.894L5.86 18.047m5.908 1.042-.347 1.97m1.563-8.864c4.924.869 6.14-6.025 1.215-6.893m-1.215 6.893-3.94-.694m5.155-6.2L8.29 4.26m5.908 1.042.348-1.97M7.48 20.364l3.126-17.727\" />", "book-open-text": "<path d=\"M12 7v14\" /><path d=\"M16 12h2\" /><path d=\"M16 8h2\" /><path d=\"M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z\" /><path d=\"M6 12h2\" /><path d=\"M6 8h2\" />", "book-open": "<path d=\"M12 7v14\" /><path d=\"M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z\" />", "bot": "<path d=\"M12 8V4H8\" /><rect width=\"16\" height=\"12\" x=\"4\" y=\"8\" rx=\"2\" /><path d=\"M2 14h2\" /><path d=\"M20 14h2\" /><path d=\"M15 13v2\" /><path d=\"M9 13v2\" />", "briefcase-business": "<path d=\"M12 12h.01\" /><path d=\"M16 6V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2\" /><path d=\"M22 13a18.15 18.15 0 0 1-20 0\" /><rect width=\"20\" height=\"14\" x=\"2\" y=\"6\" rx=\"2\" />", "briefcase": "<path d=\"M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16\" /><rect width=\"20\" height=\"14\" x=\"2\" y=\"6\" rx=\"2\" />", "calendar-check": "<path d=\"M8 2v4\" /><path d=\"M16 2v4\" /><rect width=\"18\" height=\"18\" x=\"3\" y=\"4\" rx=\"2\" /><path d=\"M3 10h18\" /><path d=\"m9 16 2 2 4-4\" />", "camera": "<path d=\"M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z\" /><circle cx=\"12\" cy=\"13\" r=\"3\" />", "circle-help": "<circle cx=\"12\" cy=\"12\" r=\"10\" /><path d=\"M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3\" /><path d=\"M12 17h.01\" />", "circle-off": "<path d=\"m2 2 20 20\" /><path d=\"M8.35 2.69A10 10 0 0 1 21.3 15.65\" /><path d=\"M19.08 19.08A10 10 0 1 1 4.92 4.92\" />", "clock": "<circle cx=\"12\" cy=\"12\" r=\"10\" /><polyline points=\"12 6 12 12 16 14\" />", "code-xml": "<path d=\"m18 16 4-4-4-4\" /><path d=\"m6 8-4 4 4 4\" /><path d=\"m14.5 4-5 16\" />", "coins": "<circle cx=\"8\" cy=\"8\" r=\"6\" /><path d=\"M18.09 10.37A6 6 0 1 1 10.34 18\" /><path d=\"M7 6h1v4\" /><path d=\"m16.71 13.88.7.71-2.82 2.82\" />", "compass": "<path d=\"m16.24 7.76-1.804 5.411a2 2 0 0 1-1.265 1.265L7.76 16.24l1.804-5.411a2 2 0 0 1 1.265-1.265z\" /><circle cx=\"12\" cy=\"12\" r=\"10\" />", "flame": "<path d=\"M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z\" />", "gavel": "<path d=\"m14.5 12.5-8 8a2.119 2.119 0 1 1-3-3l8-8\" /><path d=\"m16 16 6-6\" /><path d=\"m8 8 6-6\" /><path d=\"m9 7 8 8\" /><path d=\"m21 11-8-8\" />", "graduation-cap": "<path d=\"M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z\" /><path d=\"M22 10v6\" /><path d=\"M6 12.5V16a6 3 0 0 0 12 0v-3.5\" />", "hammer": "<path d=\"m15 12-8.373 8.373a1 1 0 1 1-3-3L12 9\" /><path d=\"m18 15 4-4\" /><path d=\"m21.5 11.5-1.914-1.914A2 2 0 0 1 19 8.172V7l-2.26-2.26a6 6 0 0 0-4.202-1.756L9 2.96l.92.82A6.18 6.18 0 0 1 12 8.4V10l2 2h1.172a2 2 0 0 1 1.414.586L18.5 14.5\" />", "landmark": "<line x1=\"3\" x2=\"21\" y1=\"22\" y2=\"22\" /><line x1=\"6\" x2=\"6\" y1=\"18\" y2=\"11\" /><line x1=\"10\" x2=\"10\" y1=\"18\" y2=\"11\" /><line x1=\"14\" x2=\"14\" y1=\"18\" y2=\"11\" /><line x1=\"18\" x2=\"18\" y1=\"18\" y2=\"11\" /><polygon points=\"12 2 20 7 4 7\" />", "laptop": "<path d=\"M20 16V7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v9m16 0H4m16 0 1.28 2.55a1 1 0 0 1-.9 1.45H3.62a1 1 0 0 1-.9-1.45L4 16\" />", "layers": "<path d=\"m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z\" /><path d=\"m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65\" /><path d=\"m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65\" />", "mail": "<rect width=\"20\" height=\"16\" x=\"2\" y=\"4\" rx=\"2\" /><path d=\"m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7\" />", "megaphone": "<path d=\"m3 11 18-5v12L3 14v-3z\" /><path d=\"M11.6 16.8a3 3 0 1 1-5.8-1.6\" />", "messages-square": "<path d=\"M14 9a2 2 0 0 1-2 2H6l-4 4V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2z\" /><path d=\"M18 9h2a2 2 0 0 1 2 2v11l-4-4h-6a2 2 0 0 1-2-2v-1\" />", "mic": "<path d=\"M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z\" /><path d=\"M19 10v2a7 7 0 0 1-14 0v-2\" /><line x1=\"12\" x2=\"12\" y1=\"19\" y2=\"22\" />", "moon": "<path d=\"M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z\" />", "network": "<rect x=\"16\" y=\"16\" width=\"6\" height=\"6\" rx=\"1\" /><rect x=\"2\" y=\"16\" width=\"6\" height=\"6\" rx=\"1\" /><rect x=\"9\" y=\"2\" width=\"6\" height=\"6\" rx=\"1\" /><path d=\"M5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3\" /><path d=\"M12 12V8\" />", "newspaper": "<path d=\"M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2\" /><path d=\"M18 14h-8\" /><path d=\"M15 18h-5\" /><path d=\"M10 6h8v4h-8V6Z\" />", "palette": "<circle cx=\"13.5\" cy=\"6.5\" r=\".5\" fill=\"currentColor\" /><circle cx=\"17.5\" cy=\"10.5\" r=\".5\" fill=\"currentColor\" /><circle cx=\"8.5\" cy=\"7.5\" r=\".5\" fill=\"currentColor\" /><circle cx=\"6.5\" cy=\"12.5\" r=\".5\" fill=\"currentColor\" /><path d=\"M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z\" />", "party-popper": "<path d=\"M5.8 11.3 2 22l10.7-3.79\" /><path d=\"M4 3h.01\" /><path d=\"M22 8h.01\" /><path d=\"M15 2h.01\" /><path d=\"M22 20h.01\" /><path d=\"m22 2-2.24.75a2.9 2.9 0 0 0-1.96 3.12c.1.86-.57 1.63-1.45 1.63h-.38c-.86 0-1.6.6-1.76 1.44L14 10\" /><path d=\"m22 13-.82-.33c-.86-.34-1.82.2-1.98 1.11c-.11.7-.72 1.22-1.43 1.22H17\" /><path d=\"m11 2 .33.82c.34.86-.2 1.82-1.11 1.98C9.52 4.9 9 5.52 9 6.23V7\" /><path d=\"M11 13c1.93 1.93 2.83 4.17 2 5-.83.83-3.07-.07-5-2-1.93-1.93-2.83-4.17-2-5 .83-.83 3.07.07 5 2Z\" />", "pen-tool": "<path d=\"M15.707 21.293a1 1 0 0 1-1.414 0l-1.586-1.586a1 1 0 0 1 0-1.414l5.586-5.586a1 1 0 0 1 1.414 0l1.586 1.586a1 1 0 0 1 0 1.414z\" /><path d=\"m18 13-1.375-6.874a1 1 0 0 0-.746-.776L3.235 2.028a1 1 0 0 0-1.207 1.207L5.35 15.879a1 1 0 0 0 .776.746L13 18\" /><path d=\"m2.3 2.3 7.286 7.286\" /><circle cx=\"11\" cy=\"11\" r=\"2\" />", "plus": "<path d=\"M5 12h14\" /><path d=\"M12 5v14\" />", "presentation": "<path d=\"M2 3h20\" /><path d=\"M21 3v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V3\" /><path d=\"m7 21 5-5 5 5\" />", "rocket": "<path d=\"M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z\" /><path d=\"m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z\" /><path d=\"M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0\" /><path d=\"M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5\" />", "scale": "<path d=\"m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z\" /><path d=\"m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z\" /><path d=\"M7 21h10\" /><path d=\"M12 3v18\" /><path d=\"M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2\" />", "smartphone": "<rect width=\"14\" height=\"20\" x=\"5\" y=\"2\" rx=\"2\" ry=\"2\" /><path d=\"M12 18h.01\" />", "sprout": "<path d=\"M7 20h10\" /><path d=\"M10 20c5.5-2.5.8-6.4 3-10\" /><path d=\"M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z\" /><path d=\"M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z\" />", "sun": "<circle cx=\"12\" cy=\"12\" r=\"4\" /><path d=\"M12 2v2\" /><path d=\"M12 20v2\" /><path d=\"m4.93 4.93 1.41 1.41\" /><path d=\"m17.66 17.66 1.41 1.41\" /><path d=\"M2 12h2\" /><path d=\"M20 12h2\" /><path d=\"m6.34 17.66-1.41 1.41\" /><path d=\"m19.07 4.93-1.41 1.41\" />", "sunrise": "<path d=\"M12 2v8\" /><path d=\"m4.93 10.93 1.41 1.41\" /><path d=\"M2 18h2\" /><path d=\"M20 18h2\" /><path d=\"m19.07 10.93-1.41 1.41\" /><path d=\"M22 22H2\" /><path d=\"m8 6 4-4 4 4\" /><path d=\"M16 18a4 4 0 0 0-8 0\" />", "users": "<path d=\"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2\" /><circle cx=\"9\" cy=\"7\" r=\"4\" /><path d=\"M22 21v-2a4 4 0 0 0-3-3.87\" /><path d=\"M16 3.13a4 4 0 0 1 0 7.75\" />"};
+const TINT = {"red": "#CE3937", "gold": "#B8912E", "blue": "#2F6FB0", "purple": "#7B52C9", "green": "#2E8B57", "teal": "#1C8A8A", "orange": "#D9772B", "gray": "currentColor"};
+const OPT_ICON = {"Builder": ["code-xml", "blue"], "Business": ["briefcase", "gold"], "Creator": ["palette", "purple"], "Policymaker": ["landmark", "red"], "Just getting started": ["sprout", "green"], "I know the basics": ["book-open", "blue"], "I work or build in it": ["rocket", "red"], "Learn the fundamentals": ["graduation-cap", "blue"], "Understand policy & regulation": ["scale", "red"], "Stay on top of news": ["newspaper", "gold"], "Meet people in the space": ["users", "purple"], "Find jobs & opportunities": ["briefcase-business", "teal"], "Build projects": ["hammer", "orange"], "Stablecoins": ["coins", "gold"], "Canadian regulation & policy": ["gavel", "red"], "Tokenization": ["layers", "teal"], "AI x blockchain": ["bot", "purple"], "How Bitcoin works": ["bitcoin", "orange"], "Ethereum, Solana & other chains": ["network", "blue"], "DeFi": ["arrow-left-right", "green"], "Founder & guest talks": ["mic", "red"], "News roundup": ["newspaper", "gold"], "Explainers & readings": ["book-open-text", "blue"], "Policy discussions": ["messages-square", "purple"], "Workshops & demos": ["laptop", "teal"], "Meetups & socials": ["party-popper", "orange"], "Core team": ["flame", "red"], "Event crew": ["calendar-check", "gold"], "Tell me more": ["circle-help", "blue"], "Not right now": ["clock", "teal"], "Advisor": ["compass", "teal"], "Marketing & socials": ["megaphone", "red"], "Newsletter": ["mail", "gold"], "Hosting sessions & events": ["presentation", "purple"], "Design, merch & website": ["pen-tool", "blue"], "Photography & videography": ["camera", "orange"], "Yes, a camera": ["camera", "orange"], "Just my phone": ["smartphone", "blue"], "No": ["circle-off", "teal"], "Other": ["plus", "gray"], "Morning": ["sunrise", "orange"], "Afternoon": ["sun", "gold"], "Evening": ["moon", "purple"]};
+function tile(v) {
+  const m = OPT_ICON[v]; if (!m || !LU[m[0]]) return "";
+  return `<span class="tile${m[1] === "gray" ? " plain" : ""}" style="--tint:${TINT[m[1]]}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${LU[m[0]]}</svg></span>`;
+}
+
+
+const OTHER = ["✏️", "Other", { ask: "Type it in" }];
+const TAGS = { v: "Virtual", p: "In person" };
+const SOCIALS = [["discord", "Discord"], ["instagram", "Instagram"], ["linkedin", "LinkedIn"], ["x", "X"], ["telegram", "Telegram"], ["whatsapp", "WhatsApp"]];
+
+
+const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+const TIMES = [["Morning", "🌅", "9am–12pm"], ["Afternoon", "☀️", "12–5pm"], ["Evening", "🌙", "5–9pm"]];
+
+let ENDPOINT = "", STEPS = [], TEXT = {}; // filled in by OBC.start()
+const answers = {};
+let i = 0;
+let app; // set once the page shell is built
+let dir = 1;
+let shownStep = -1; // which card is on screen, so taps on the same card redraw without animating
+const LOGO = "/forms/_engine/logo.png";
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const visible = () => STEPS.filter(s => !s.when || s.when(answers));
+const extras = o => o[2] || {};
+const isEmail = v => /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v);
+const icon = e => ICONS[e] ? `<svg viewBox="0 0 24 24" fill="${e === "x" ? "currentColor" : ICONS[e].c}" aria-hidden="true"><path d="${ICONS[e].d}"/></svg>` : e;
+
+function go(delta) {
+  stash();
+  const list = visible();
+  const cur = list.indexOf(STEPS[i]);
+  dir = delta;
+  i = STEPS.indexOf(list[Math.max(0, Math.min(list.length - 1, cur + delta))]);
+  render();
+}
+
+// Save whatever is typed into any text box on the current card
+function stash() {
+  app.querySelectorAll("input[data-key]").forEach(el => { answers[el.dataset.key] = el.value.trim(); });
+}
+
+function optHTML(s, o, picked) {
+  const [e, v] = o, x = extras(o);
+  const n = picked.indexOf(v);
+  const right = [
+    x.hot ? `<span class="hot">Hot</span>` : "",
+    s.ranked && n >= 0 ? `<span class="rank">${n + 1}</span>` : "",
+  ].join("");
+  return `<button class="opt ${n >= 0 ? "on" : ""}" data-v="${esc(v)}">
+    ${ICONS[e] ? `<span class="e">${icon(e)}</span>` : tile(v)}
+    <span class="lbl-text">${esc(v)}${x.note ? `<span class="note">${esc(x.note)}</span>` : ""}${x.tags ? `<span class="tags">${x.tags.map(t => `<span class="tag ${t}">${TAGS[t]}</span>`).join("")}</span>` : ""}</span>
+    ${right ? `<span class="right">${right}</span>` : ""}</button>`;
+}
+
+// Text box for the selected option that asks for more detail ("Other")
+function detailHTML(s, picked) {
+  const o = s.opts.find(o => picked.includes(o[1]) && extras(o).ask);
+  if (!o) return "";
+  const key = s.id + "_other";
+  return `<div class="detail"><input type="text" data-key="${key}" placeholder="${esc(extras(o).ask)}" value="${esc(answers[key] || "")}"></div>`;
+}
+
+function render() {
+  const list = visible();
+  const s = STEPS[i];
+  const pos = list.indexOf(s);
+  document.body.dataset.theme = s.theme || "light";
+  const qs = list.filter(x => x.type !== "intro" && x.type !== "done");
+  const qi = qs.indexOf(s);
+  $("segs").innerHTML = qs.map((x, k) => `<i class="${k < qi || s.type === "done" ? "on" : ""}${k === qi ? " on now" : ""}"></i>`).join("");
+  $("stepno").textContent = qi >= 0 ? `${String(qi + 1).padStart(2, "0")} / ${String(qs.length).padStart(2, "0")}` : "";
+  const back = pos > 0 && s.type !== "done" ? `<button class="btn ghost" id="back">← Back</button>` : "<span></span>";
+  let html = "";
+
+  if (s.type === "intro") {
+    html = `
+      <img class="hero-logo" src="${LOGO}" alt="Ottawa Blockchain">
+      <p class="kicker">${TEXT.intro.kicker}</p>
+      <h1>${TEXT.intro.title}</h1>
+      <p class="sub">${TEXT.intro.sub}</p>
+      ${TEXT.intro.teaser ? `<div class="teaser"><span class="chip">${TEXT.intro.teaser.chip}</span><div>${TEXT.intro.teaser.text}</div></div>` : ""}
+      <div class="nav"><button class="btn wide" id="next">${TEXT.intro.button || "Let's go →"}</button></div>`;
+
+  } else if (s.type === "single" || s.type === "multi") {
+    const multi = s.type === "multi";
+    const picked = [].concat(answers[s.id] || []);
+    const needsText = s.opts.some(o => picked.includes(o[1]) && extras(o).ask);
+    const legend = s.opts.some(o => extras(o).tags)
+      ? `<div class="legend">${Object.entries(TAGS).map(([k, t]) => `<span class="tag ${k}">${t}</span>`).join("")}</div>` : "";
+    html = `
+      <h2>${esc(s.q)}</h2>
+      ${s.sub ? `<p class="sub">${esc(s.sub)}</p>` : `<div class="gap"></div>`}
+      ${s.hint ? `<p class="hint">${esc(s.hint)}</p>` : ""}
+      ${legend}
+      <div class="opts ${s.opts.length > 4 && !legend ? "two" : ""}">${s.opts.map(o => optHTML(s, o, picked)).join("")}</div>
+      ${detailHTML(s, picked)}
+      <div class="nav">${back}
+        ${multi
+          ? `<span class="count">${picked.length ? picked.length + " picked" + (s.max ? " of " + s.max : "") : ""}</span><button class="btn" id="next">${picked.length ? "Next →" : "Skip →"}</button>`
+          : (picked.length || needsText ? `<button class="btn" id="next">Next →</button>` : "")}
+      </div>`;
+
+  } else if (s.type === "when") {
+    const on = (k, v) => (answers[k] || []).includes(v) ? "on" : "";
+    const any = (answers.days || []).length || (answers.times || []).length;
+    html = `
+      <h2>${esc(s.q)}</h2><div class="gap"></div>
+      <p class="hint">${esc(s.hint)}</p>
+      <div class="grp">Days</div>
+      <div class="pills">${DAYS.map(d => `<button class="opt pill ${on("days", d)}" data-k="days" data-v="${d}">${d}</button>`).join("")}</div>
+      <div class="grp">Time of day</div>
+      <div class="pills three">${TIMES.map(([t, e, r]) => `<button class="opt pill ${on("times", t)}" data-k="times" data-v="${t}">${tile(t)}${t}<small>${r}</small></button>`).join("")}</div>
+      <div class="nav">${back}<button class="btn" id="next">${any ? "Next →" : "Skip →"}</button></div>`;
+
+  } else if (s.type === "contact") {
+    html = `
+      <p class="kicker">${TEXT.contact.kicker}</p>
+      <h2>${TEXT.contact.title}</h2>
+      <p class="sub">${TEXT.contact.sub}</p>
+      <label class="lbl">Name</label>
+      <input type="text" data-key="name" placeholder="Your name" value="${esc(answers.name || "")}">
+      <label class="lbl">Email</label>
+      <input type="email" data-key="email" placeholder="you@email.com" value="${esc(answers.email || "")}">
+      <label class="lbl">Best social to reach you on</label>
+      <div class="socials">${SOCIALS.map(([k, n]) => `<button class="opt soc ${answers.social === n ? "on" : ""}" data-soc="${n}" title="${n}" aria-label="${n}"><span class="e">${icon(k)}</span></button>`).join("")}</div>
+      ${answers.social ? `<input type="text" data-key="social_handle" placeholder="Your ${esc(answers.social)} handle or link" value="${esc(answers.social_handle || "")}">` : ""}
+      <div id="msg"></div>
+      <div class="nav">${back}<button class="btn" id="next">Next →</button></div>`;
+
+  } else if (s.type === "newsletter") {
+    const have = isEmail(answers.email || "");
+    html = `
+      <p class="kicker">Last one</p>
+      <h2>${TEXT.newsletter.title}</h2>
+      <p class="sub">${TEXT.newsletter.sub}</p>
+      ${have
+        ? `<div class="opts">
+             <button class="opt ${answers.newsletter === "Yes" ? "on" : ""}" data-nl="Yes"><span>Yes, send it to ${esc(answers.email)}</span></button>
+             <button class="opt ${answers.newsletter === "No" ? "on" : ""}" data-nl="No"><span>No thanks</span></button>
+           </div>`
+        : `<input type="email" data-key="email" placeholder="you@email.com (optional)" value="${esc(answers.email || "")}">`}
+      <div id="msg"></div>
+      <div class="nav">${back}<button class="btn" id="submit">Send it →</button></div>`;
+
+  } else if (s.type === "done") {
+    html = `
+      <img class="hero-logo" src="${LOGO}" alt="">
+      <p class="kicker">Done</p>
+      <h1>${TEXT.done.title}</h1>
+      <p class="sub">${TEXT.done.sub}</p>
+      ${TEXT.done.teaser ? `<div class="teaser"><span class="chip">${TEXT.done.teaser.chip}</span><div>${TEXT.done.teaser.text}</div></div>` : ""}
+      ${ENDPOINT ? "" : `<p class="count">Preview mode: this response was not saved.</p>`}`;
+  }
+
+  // Only slide in when moving to a different card. Re-drawing the same card (a tap on an option)
+  // keeps it still and keeps the scroll position, so nothing flickers on phones.
+  const newCard = i !== shownStep;
+  const y = window.scrollY, by = document.body.scrollTop;
+  app.innerHTML = `<div class="card ${newCard ? (dir < 0 ? "back" : "") : "still"}">${html}</div>`;
+  if (newCard) { window.scrollTo(0, 0); document.body.scrollTop = 0; }
+  else { window.scrollTo(0, y); document.body.scrollTop = by; }
+  shownStep = i;
+  if (typeof paintBar === "function") paintBar();
+  wire(s);
+}
+
+function wire(s) {
+  $("back") && ($("back").onclick = () => go(-1));
+  $("next") && ($("next").onclick = () => {
+    if (s.type === "contact") {
+      stash();
+      if (answers.email && !isEmail(answers.email)) { $("msg").innerHTML = `<p class="err">That email doesn't look right.</p>`; return; }
+    }
+    go(1);
+  });
+  $("submit") && ($("submit").onclick = submit);
+
+  // Focus a freshly revealed text box
+  const box = app.querySelector(".detail input, input[data-key=social_handle]");
+  if (box && !box.value) box.focus();
+
+  app.querySelectorAll(".opt").forEach(b => b.onclick = () => {
+    stash();
+    const v = b.dataset.v;
+
+    if (b.dataset.nl) { answers.newsletter = b.dataset.nl; return render(); }
+    if (b.dataset.soc) {
+      if (answers.social !== b.dataset.soc) answers.social_handle = "";
+      answers.social = answers.social === b.dataset.soc ? "" : b.dataset.soc;
+      return render();
+    }
+
+    if (b.dataset.k) { // day / time pills
+      const arr = answers[b.dataset.k] || [];
+      const k = arr.indexOf(v);
+      k >= 0 ? arr.splice(k, 1) : arr.push(v);
+      answers[b.dataset.k] = arr;
+      return render();
+    }
+
+    const o = s.opts.find(o => o[1] === v);
+    if (s.type === "multi") {
+      const arr = answers[s.id] || [];
+      const k = arr.indexOf(v);
+      if (k >= 0) { arr.splice(k, 1); if (extras(o).ask) delete answers[s.id + "_other"]; }
+      else if (!s.max || arr.length < s.max) arr.push(v);
+      answers[s.id] = arr;
+      return render();
+    }
+
+    // single choice
+    if (answers[s.id] !== v) delete answers[s.id + "_other"];
+    answers[s.id] = v;
+    STEPS.forEach(t => { if (t.when && !t.when(answers)) { delete answers[t.id]; delete answers[t.id + "_other"]; } }); // drop answers to cards that are now skipped
+    render();
+    if (!extras(o).ask) setTimeout(() => go(1), 220); // auto-advance unless we need them to type
+  });
+}
+
+async function submit() {
+  stash();
+  const btn = $("submit"), msg = $("msg");
+  if (answers.email && !isEmail(answers.email)) { msg.innerHTML = `<p class="err">That email doesn't look right.</p>`; return; }
+  const contactShown = visible().some(t => t.type === "contact");
+  if (answers.email && !answers.newsletter && !contactShown) answers.newsletter = "Yes";
+  btn.disabled = true; btn.textContent = "Sending…";
+
+  const join = k => [].concat(answers[k] || []).join(", ");
+  const row = { timestamp: new Date().toISOString() };
+  STEPS.filter(s => s.opts).forEach(s => {
+    if (!s.when || s.when(answers)) { row[s.id] = join(s.id); row[s.id + "_other"] = answers[s.id + "_other"] || ""; }
+  });
+  // Ranked answers: "1. Founder & guest talks, 2. News roundup"
+  STEPS.filter(t => t.ranked && row[t.id] !== undefined).forEach(t => { row[t.id] = (answers[t.id] || []).map((v, n) => `${n + 1}. ${v}`).join(", "); });
+  if (!contactShown) { answers.name = answers.social = answers.social_handle = ""; }
+  Object.assign(row, {
+    days: join("days"), times: join("times"),
+    name: answers.name || "", email: answers.email || "",
+    social: answers.social || "", social_handle: answers.social_handle || "",
+    newsletter: answers.newsletter || "No",
+  });
+
+  if (ENDPOINT) {
+    try {
+      // text/plain avoids a CORS preflight; Apps Script reads the raw body
+      await fetch(ENDPOINT, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain" }, body: JSON.stringify(row) });
+    } catch (e) {
+      btn.disabled = false; btn.textContent = "Send it →";
+      msg.innerHTML = `<p class="err">Couldn't send. Check your connection and try again.</p>`;
+      return;
+    }
+  }
+  i = STEPS.findIndex(s => s.id === "done");
+  render();
+}
+
+// Light / dark mode. The button cycles Auto (follows the phone) -> Light -> Dark, and remembers the choice.
+const ICON_AUTO = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/></svg>';
+const ICON_SUN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>';
+const ICON_MOON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>';
+const MODES = { auto: [ICON_AUTO, "Auto (matches your device)"], light: [ICON_SUN, "Light"], dark: [ICON_MOON, "Dark"] };
+const darkQuery = window.matchMedia ? matchMedia("(prefers-color-scheme: dark)") : null;
+let pref = "auto";
+try { pref = localStorage.getItem("obc-mode") || "auto"; } catch (e) {}
+if (!MODES[pref]) pref = "auto";
+function applyMode() {
+  const m = pref === "auto" ? (darkQuery && darkQuery.matches ? "dark" : "light") : pref;
+  document.documentElement.dataset.mode = m;
+  const btn = $("mode");
+  btn.innerHTML = MODES[pref][0];
+  btn.title = "Theme: " + MODES[pref][1];
+  btn.setAttribute("aria-label", "Theme: " + MODES[pref][1] + ". Tap to change.");
+  paintBar();
+}
+function paintBar() {
+  const c = getComputedStyle(document.body).getPropertyValue("--bg").trim();
+  if (c) $("themecolor").setAttribute("content", c);
+}
+function initMode() {
+$("mode").onclick = () => {
+  pref = { auto: "light", light: "dark", dark: "auto" }[pref];
+  try { localStorage.setItem("obc-mode", pref); } catch (e) {}
+  applyMode();
+};
+darkQuery && darkQuery.addEventListener && darkQuery.addEventListener("change", () => { if (pref === "auto") applyMode(); });
+applyMode();
+}
+
+// Builds the page shell (progress bars, brand, theme button) and shows the first card.
+function start(form) {
+  ENDPOINT = form.endpoint || "";
+  STEPS = form.steps;
+  TEXT = form.text;
+  document.body.insertAdjacentHTML("afterbegin", `
+<header>
+  <div class="segs" id="segs"></div>
+  <div class="top">
+    <a class="brand" href="https://ottawablockchain.ca"><img src="${LOGO}" alt="">Ottawa Blockchain</a>
+    <span class="top-right"><span class="step-no" id="stepno"></span><button class="mode" id="mode" aria-label="Switch light or dark mode"></button></span>
+  </div>
+</header>
+<main><div id="app"></div></main>
+<footer>${TEXT.footer || ""}</footer>`);
+  app = $("app");
+  initMode();
+  if (location.hash === "#columns") return showColumns();
+  render();
+}
+
+// Column names this form sends, in order. Paste them as row 1 of the form's Google Sheet.
+function columns() {
+  const cols = ["timestamp"];
+  STEPS.forEach(s => {
+    if (s.opts) cols.push(s.id, s.id + "_other");
+    if (s.type === "when") cols.push("days", "times");
+    if (s.type === "contact") cols.push("name", "email", "social", "social_handle");
+    if (s.type === "newsletter") cols.push("email", "newsletter");
+  });
+  return [...new Set(cols)];
+}
+
+// Open a form with #columns at the end of its address to see the list.
+function showColumns() {
+  app.innerHTML = `<div class="card"><p class="kicker">Setup</p><h2>Sheet columns</h2>
+    <p class="sub">Paste these into row 1 of the form's Google Sheet, one per column.</p>
+    <p style="font-family:monospace;word-break:break-word">${esc(columns().join(", "))}</p></div>`;
+}
+
+window.OBC = { start, OTHER, columns };
+})();
