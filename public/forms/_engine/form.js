@@ -316,8 +316,28 @@ function start(form) {
 <footer>${TEXT.footer || ""}</footer>`);
   app = $("app");
   initMode();
+  if (location.hash === "#columns") return showColumns();
   render();
 }
 
-window.OBC = { start, OTHER };
+// Column names this form sends, in order. Paste them as row 1 of the form's Google Sheet.
+function columns() {
+  const cols = ["timestamp"];
+  STEPS.forEach(s => {
+    if (s.opts) cols.push(s.id, s.id + "_other");
+    if (s.type === "when") cols.push("days", "times");
+    if (s.type === "contact") cols.push("name", "email", "social", "social_handle");
+    if (s.type === "newsletter") cols.push("email", "newsletter");
+  });
+  return [...new Set(cols)];
+}
+
+// Open a form with #columns at the end of its address to see the list.
+function showColumns() {
+  app.innerHTML = `<div class="card"><p class="kicker">Setup</p><h2>Sheet columns</h2>
+    <p class="sub">Paste these into row 1 of the form's Google Sheet, one per column.</p>
+    <p style="font-family:monospace;word-break:break-word">${esc(columns().join(", "))}</p></div>`;
+}
+
+window.OBC = { start, OTHER, columns };
 })();

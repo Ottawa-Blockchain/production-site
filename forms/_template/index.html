@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Starter for a new Ottawa Blockchain form. Copy this file to public/forms/<form-name>/index.html,
+     then change everything marked CHANGE. See .claude/skills/obc-form/SKILL.md. -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="format-detection" content="telephone=no">
+<meta name="description" content="CHANGE: one line about this form.">
+<meta property="og:title" content="CHANGE: title shown when the link is shared">
+<meta property="og:description" content="CHANGE: one line shown when the link is shared">
+<meta property="og:image" content="https://ottawablockchain.ca/logo.png">
+<title>Ottawa Blockchain: CHANGE form title</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#E8DED3" id="themecolor">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="/logo.png">
+<link rel="stylesheet" href="/forms/_engine/form.css">
+</head>
+<body>
+<script src="/forms/_engine/form.js"></script>
+<script>
+/* CHANGE: paste the Google Apps Script web app URL (ends in /exec).
+   Leave it empty while building: the form runs in preview mode and saves nothing. */
+const ENDPOINT = "";
+
+const OTHER = OBC.OTHER; // an "Other" option that opens a text box
+
+/* Each step is one card. Types: intro, single, multi, when, contact, newsletter, done.
+   Option format: [icon, label, extras]
+     icon:   a brand logo name (substack, discord, instagram, linkedin, x, telegram, whatsapp)
+             or anything else; the colored tile comes from the label (see OPT_ICON in the engine)
+     extras: { note: "grey line under the label", hot: 1, ask: "placeholder for a text box",
+               tags: ["v", "p"] (Virtual / In person) }
+   Step options: max (pick up to N), ranked (tap order = priority), sub, hint,
+                 theme: "red" (red card), when: a => ... (only show if earlier answers match).
+   The step id becomes the Sheet column name, so keep ids short and lowercase. */
+const STEPS = [
+  { id: "intro", type: "intro", theme: "red" },
+
+  { id: "reach", type: "multi", q: "CHANGE: Where do you prefer getting updates?", hint: "Select all that apply",
+    opts: [["substack", "Substack / email"], ["discord", "Discord"], ["instagram", "Instagram"], ["linkedin", "LinkedIn"], OTHER] },
+
+  { id: "role", type: "single", q: "CHANGE: What are you closest to?",
+    opts: [["", "Builder", { note: "Developers, engineers, founders" }],
+           ["", "Business", { note: "Finance, operations, investors" }],
+           ["", "Creator", { note: "Content, media, community" }],
+           ["", "Policymaker", { note: "Government, policy, law" }]] },
+
+  { id: "when", type: "when", q: "CHANGE: When works best?", hint: "Tap all that work · Ottawa time (ET)" },
+
+  { id: "contact", type: "contact" },
+  { id: "newsletter", type: "newsletter" },
+  { id: "done", type: "done", theme: "red" },
+];
+
+OBC.start({
+  endpoint: ENDPOINT,
+  steps: STEPS,
+  text: {
+    footer: "CHANGE: Takes about a minute.",
+    intro: {
+      kicker: "CHANGE: Short label · 1 minute",
+      title: "CHANGE: Big headline.",
+      sub: "CHANGE: One or two sentences on why we're asking.",
+      teaser: { chip: "Coming up", text: "<b>CHANGE: Optional teaser.</b> Delete this teaser line if you don't need it." },
+    },
+    contact: { kicker: "Contact", title: "CHANGE: How do we reach you?", sub: "Fill in what you're comfortable with." },
+    newsletter: { title: "Want the newsletter?", sub: "A monthly roundup of the latest news, on Substack. Optional." },
+    done: {
+      title: "Thanks.<br>You're in.",
+      sub: "CHANGE: What happens next.",
+    },
+  },
+});
+</script>
+</body>
+</html>
