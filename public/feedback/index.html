@@ -368,7 +368,7 @@ function render() {
       ${detailHTML(s, picked)}
       <div class="nav">${back}
         ${multi
-          ? `<span class="count">${picked.length ? picked.length + " picked" + (s.max ? " of " + s.max : "") : ""}</span><button class="btn" id="next">${picked.length ? "Next →" : "Skip →"}</button>`
+          ? `<span class="count">${picked.length ? picked.length + " picked" + (s.max ? " of " + s.max : "") : ""}</span>${picked.length ? `<button class="btn" id="next">Next →</button>` : ""}`
           : (picked.length || needsText ? `<button class="btn" id="next">Next →</button>` : "")}
       </div>`;
 
@@ -382,7 +382,7 @@ function render() {
       <div class="pills">${DAYS.map(d => `<button class="opt pill ${on("days", d)}" data-k="days" data-v="${d}">${d}</button>`).join("")}</div>
       <div class="grp">Time of day</div>
       <div class="pills three">${TIMES.map(([t, e, r]) => `<button class="opt pill ${on("times", t)}" data-k="times" data-v="${t}">${tile(t)}${t}<small>${r}</small></button>`).join("")}</div>
-      <div class="nav">${back}<button class="btn" id="next">${any ? "Next →" : "Skip →"}</button></div>`;
+      <div class="nav">${back}${any ? `<button class="btn" id="next">Next →</button>` : ""}</div>`;
 
   } else if (s.type === "contact") {
     html = `
