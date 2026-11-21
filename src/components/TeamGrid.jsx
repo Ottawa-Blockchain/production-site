@@ -30,13 +30,6 @@ const teamsByYear = {
       bio: '',
       linkedin: 'https://www.linkedin.com/in/gregory-sandstrom/',
     },
-    {
-      id: 4,
-      name: 'Brad Stewart',
-      role: 'Branding & Promotions',
-      bio: '',
-      linkedin: 'https://www.linkedin.com/in/bradjoy/',
-    },
   ],
   '2025-2026': [
     {
