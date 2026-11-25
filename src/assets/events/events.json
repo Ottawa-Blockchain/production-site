@@ -1,15 +1,23 @@
 {
   "upcomingEvents": [
     {
+      "title": "Office Hour with Eric Richmond",
+      "date": "Friday, December 11, 2026, 2:00-3:00 PM ET",
+      "image": "event10.png",
+      "blurb": "Join Eric Richmond, CEO of Coinbase Canada, online to hear how he thinks, builds, and sees the future of crypto, stablecoins, and Canadian regulation.",
+      "rsvpLink": "https://luma.com/57i9ktk9",
+      "partnerEvent": false
+    }
+  ],
+  "pastEvents": [
+    {
       "title": "Ottawa Web3 x Blockchain Summit",
       "date": "Thursday, October 1, 2026, 5:00-7:00 PM",
       "image": "event9.png",
       "blurb": "An evening summit with founders, builders, policy makers and researchers exploring the future of Web3 and blockchain in Canada.",
       "rsvpLink": "https://luma.com/jgg8intk",
       "partnerEvent": false
-    }
-  ],
-  "pastEvents": [
+    },
     {
       "title": "2026 Futurist Toronto Show",
       "date": "July 21-22, 2026",
